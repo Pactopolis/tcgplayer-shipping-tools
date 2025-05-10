@@ -85,13 +85,18 @@ def generate_address_pdf(filename, addresses, config):
     # Save the PDF
     c.save()
 
-def process_shipping_list(csv_path):
+def process_shipping_list(csv_path, config_path='config.json'):
     data = pd.read_csv(csv_path)
 
     data['FullName'] = data['FirstName'] + ' ' + data['LastName']
     data['FullCost'] = data['Value Of Products'] + data['Shipping Fee Paid']
 
-    filtered_data = data[data['FullCost'] < 20]
+    # Get value threshold from config
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    value_threshold = config.get('value_threshold', 20)
+
+    filtered_data = data[data['FullCost'] < value_threshold]
 
     addresses = []
     for _, row in filtered_data.iterrows():
