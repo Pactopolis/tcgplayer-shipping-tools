@@ -1,0 +1,14 @@
+{
+  "start_row": 0,
+  "start_col": 0,
+  "font_color": [0, 0, 0],
+  "default_address": {
+    "name": "Your Business Name",
+    "addr1": "Your Address Line 1",
+    "addr2": "",
+    "city": "Your City",
+    "state": "ST",
+    "zipcode": "12345"
+  },
+  "repeat_default": 0
+}
