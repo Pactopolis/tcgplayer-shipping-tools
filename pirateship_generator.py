@@ -1,8 +1,9 @@
 import pandas as pd
 import re
 from datetime import datetime
+import json
 
-def process_tcg_export(tcg_export_path):
+def process_tcg_export(tcg_export_path, config_path='config.json'):
     """
     Process the TCGplayer export file and return the transformed data for PirateShip.
     """
@@ -14,9 +15,14 @@ def process_tcg_export(tcg_export_path):
     export_number = file_name_match.group(2)
     formatted_date = datetime.strptime(export_date, '%Y%m%d').strftime('%Y-%m-%d')
 
+    # Get value threshold from config
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    value_threshold = config.get('value_threshold', 20)
+
     tcg_export_df = pd.read_csv(tcg_export_path)
     tcg_export_df['FullCost'] = tcg_export_df['Value Of Products'] + tcg_export_df['Shipping Fee Paid']
-    filtered_df = tcg_export_df[tcg_export_df['FullCost'] >= 20]
+    filtered_df = tcg_export_df[tcg_export_df['FullCost'] >= value_threshold]
 
     transformed_data = pd.DataFrame({
         'Name': filtered_df['FirstName'] + ' ' + filtered_df['LastName'],
@@ -35,12 +41,12 @@ def process_tcg_export(tcg_export_path):
 
     return transformed_data, formatted_date, export_number
 
-def generate_pirateship_csv(tcg_export_path, output_path):
+def generate_pirateship_csv(tcg_export_path, output_path, config_path='config.json'):
     """
     Generate a PirateShip-compatible CSV file from the TCGplayer export.
     Returns the path to the generated file.
     """
-    transformed_data, formatted_date, export_number = process_tcg_export(tcg_export_path)
+    transformed_data, formatted_date, export_number = process_tcg_export(tcg_export_path, config_path)
     
     output_file = output_path + f'\\PirateShip_Import_{formatted_date}_{export_number}.csv'
     transformed_data.to_csv(output_file, index=False)

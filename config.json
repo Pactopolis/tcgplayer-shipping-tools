@@ -2,6 +2,7 @@
   "start_row": 0,
   "start_col": 0,
   "font_color": [0, 0, 0],
+  "value_threshold": 20,
   "default_address": {
     "name": "Your Business Name",
     "addr1": "Your Address Line 1",
